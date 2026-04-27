@@ -1,0 +1,283 @@
+CS 300 Pseudocode and Runtime Analysis
+Trevor Powers
+
+Introduction:
+For this project, I designed pseudocode for a program that helps academic advisors manage course information. The program needs to load courses from a file, store them in a data structure, print all courses in order, and allow a user to look up a specific course and see its prerequisites. I created versions of the pseudocode using a vector, a hash table, and a binary search tree. After that, I compared how each one performs using Big O runtime to decide which structure works best.
+
+Structure Course:
+1.	courseNumber
+2.	courseTitle
+3.	prerequisites (list)
+End Structure
+
+
+Menu Pseudocode:
+Function main()
+
+    Create courseList (vector)
+    Create hashTable
+    Create binarySearchTree
+    dataLoaded = false
+
+    While user has not chosen to exit
+
+        Print:
+        1. Load Data
+        2. Print Course List
+        3. Print Course
+        9. Exit
+
+        Get user choice
+
+        If choice is 1
+            Ask for file name
+            Load data into structure
+            dataLoaded = true
+            Print "Data loaded successfully"
+
+        Else if choice is 2
+            If data not loaded
+                Print "Load data first"
+            Else
+                Print all courses in order
+            End if
+
+        Else if choice is 3
+            If data not loaded
+                Print "Load data first"
+            Else
+                Ask for course number
+                Search and print course info
+            End if
+
+        Else if choice is 9
+            Print "Goodbye"
+            End program
+
+        Else
+            Print "Invalid option"
+
+    End While
+
+End Function
+
+
+Vector Pseudocode
+
+The vector is the simplest approach. Everything is stored in a list.
+
+Load Courses:
+Function loadCoursesVector(fileName, courseList)
+
+    Open file
+
+    If file fails to open
+        Print error and stop
+
+    Create list of courseNumbers
+
+    First pass through file
+        Store all course numbers
+
+    Second pass through file
+        Create Course objects
+
+        For each prerequisite
+            If not in courseNumbers
+                Print error and stop
+
+        Add course to courseList
+
+    Close file
+
+End Function
+
+
+Print All Courses:
+Function printAllCoursesVector(courseList)
+
+    Sort courseList by courseNumber
+
+    For each course
+        Print courseNumber and courseTitle
+
+End Function
+
+
+Search and Print One Course:
+Function printCourseVector(courseList, courseNumber)
+
+    Loop through courseList
+
+        If match found
+            Print course info and prerequisites
+            Return
+
+    Print "Course not found"
+
+End Function
+
+
+
+Hash Table Pseudocode
+
+The hash table stores courses based on a key (course number).
+
+Hash Function:
+Function hash(courseNumber)
+    total = sum of ASCII values
+    Return total mod tableSize
+End Function
+
+
+Load Courses:
+Function loadCoursesHash(fileName, hashTable)
+
+    Open file
+
+    Create list of allCourseNumbers
+    Create list of courses
+
+    Read file and store all courses
+
+    Validate all prerequisites exist
+
+    Insert each course into hashTable
+
+End Function
+
+
+Insert:
+Function insertCourseHash(hashTable, course)
+
+    key = hash(courseNumber)
+
+    If bucket empty
+        Insert course
+    Else
+        Add to list in bucket
+
+End Function
+
+
+Print All Courses:
+Function printAllCoursesHash(hashTable)
+
+    Create empty list
+
+    Loop through all buckets
+        Add courses to list
+
+    Sort list
+
+    Print all courses
+
+End Function
+
+
+Search One Course:
+Function searchCourseHash(hashTable, courseNumber)
+
+    Find bucket using hash
+
+    Loop through bucket
+        If found
+            Print course info
+            Return
+
+    Print "Course not found"
+
+End Function
+
+
+Binary Search Tree Pseudocode
+
+The BST keeps courses in sorted order automatically.
+
+Load Courses:
+
+
+Function loadCoursesTree(tree, fileName)
+
+    Read file and store courses
+
+    Validate prerequisites
+
+    Insert each course into tree
+
+End Function
+
+
+Insert:
+Function insertCourseTree(tree, course)
+
+    If root empty
+        Set root
+        Return
+
+    Move through tree
+
+        If smaller → go left
+        If larger → go right
+
+        Insert when empty spot found
+
+End Function
+
+
+Search:
+Function searchCourseTree(tree, courseNumber)
+
+    Start at root
+
+    While node exists
+        If match
+            Print info
+            Return
+        If smaller → go left
+        Else → go right
+
+    Print not found
+
+End Function
+
+
+Print All (Sorted):
+Function printInOrder(node)
+
+    If empty return
+
+    Traverse left
+    Print node
+    Traverse right
+
+End Function
+
+Vector	O(n²)	O(n)
+Hash Table	O(n²) worst case	O(n)
+BST	O(n²) worst case	O(n)
+
+Explanation:
+
+The vector takes longer because it scans lists multiple times, especially when checking prerequisites. The hash table is usually fast, but in the worst case collisions slow it down. The binary search tree can also slow down if it becomes unbalanced, but it performs well in most cases.
+
+
+Advantages and Disadvantages
+Vector:
+
+The vector is easy to use and simple to understand. It works well for smaller datasets. The downside is that searching is slow and sorting has to be done manually.
+
+
+Hash Table:
+
+The hash table is very fast for searching, which is helpful when looking up courses. However, it does not keep data sorted, so extra work is needed to print courses in order.
+
+
+Binary Search Tree:
+
+The BST is the best for this project because it keeps data sorted automatically. That makes printing all courses much easier. The only downside is that it can become slower if the tree is not balanced.
+
+
+Recommendation:
+
+Out of the three options, the binary search tree is the best choice. It handles searching well and prints courses in sorted order without needing extra steps. Even though it can slow down in the worst case, it still fits the requirements of this program better than the vector or hash table.
