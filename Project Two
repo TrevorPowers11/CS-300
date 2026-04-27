@@ -1,0 +1,150 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cctype>
+#include <limits>
+
+using namespace std;
+
+struct Course {
+    string courseNumber;
+    string courseTitle;
+    vector<string> prerequisites;
+};
+
+string toUpper(string str) {
+    for (unsigned int i = 0; i < str.length(); i++) {
+        str[i] = toupper(str[i]);
+    }
+    return str;
+}
+
+bool compareCourses(const Course& a, const Course& b) {
+    return a.courseNumber < b.courseNumber;
+}
+
+void loadData(vector<Course>& courses, string fileName) {
+    ifstream file(fileName.c_str());
+
+    if (!file.is_open()) {
+        cout << "Error: File not found." << endl;
+        return;
+    }
+
+    courses.clear();
+    string line;
+
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string token;
+        Course course;
+
+        getline(ss, token, ',');
+        course.courseNumber = token;
+
+        getline(ss, token, ',');
+        course.courseTitle = token;
+
+        while (getline(ss, token, ',')) {
+            course.prerequisites.push_back(token);
+        }
+
+        courses.push_back(course);
+    }
+
+    file.close();
+    cout << "Data loaded successfully." << endl;
+}
+
+void printCourseList(vector<Course> courses) {
+    sort(courses.begin(), courses.end(), compareCourses);
+
+    cout << "Here is a sample schedule:" << endl;
+
+    for (unsigned int i = 0; i < courses.size(); i++) {
+        cout << courses[i].courseNumber << ", " << courses[i].courseTitle << endl;
+    }
+}
+
+void printCourse(vector<Course>& courses) {
+    string input;
+    cout << "What course do you want to know about? ";
+    getline(cin, input);
+
+    input = toUpper(input);
+
+    for (unsigned int i = 0; i < courses.size(); i++) {
+        if (courses[i].courseNumber == input) {
+            cout << courses[i].courseNumber << ", " << courses[i].courseTitle << endl;
+
+            cout << "Prerequisites: ";
+            if (courses[i].prerequisites.empty()) {
+                cout << "None";
+            } else {
+                for (unsigned int j = 0; j < courses[i].prerequisites.size(); j++) {
+                    cout << courses[i].prerequisites[j];
+                    if (j < courses[i].prerequisites.size() - 1) {
+                        cout << ", ";
+                    }
+                }
+            }
+            cout << endl;
+            return;
+        }
+    }
+
+    cout << "Course not found." << endl;
+}
+
+void displayMenu() {
+    cout << endl;
+    cout << "1. Load Data Structure." << endl;
+    cout << "2. Print Course List." << endl;
+    cout << "3. Print Course." << endl;
+    cout << "9. Exit" << endl;
+    cout << "What would you like to do? ";
+}
+
+int main() {
+    vector<Course> courses;
+    int choice = 0;
+    string fileName;
+
+    cout << "Welcome to the course planner." << endl;
+
+    while (choice != 9) {
+        displayMenu();
+
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input." << endl;
+            continue;
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        if (choice == 1) {
+            cout << "Enter file name: ";
+            getline(cin, fileName);
+            loadData(courses, fileName);
+        }
+        else if (choice == 2) {
+            printCourseList(courses);
+        }
+        else if (choice == 3) {
+            printCourse(courses);
+        }
+        else if (choice == 9) {
+            cout << "Thank you for using the course planner!" << endl;
+        }
+        else {
+            cout << choice << " is not a valid option." << endl;
+        }
+    }
+
+    return 0;
+}
